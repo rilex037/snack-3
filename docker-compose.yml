@@ -1,0 +1,50 @@
+version: '3.7'
+services:
+
+  # The Application
+  php:
+    build:
+      context: .
+      dockerfile: .docker/php/Dockerfile
+    volumes:
+      - ./:/home/app
+      - ./.docker/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+    networks:
+      - enodeus
+    depends_on:
+      - mysql
+
+  # The Web Server
+  nginx:
+    image: nginx:1.20-alpine
+    volumes:
+      - ./public:/home/app/public
+      - ./.docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - enodeus
+    ports:
+      - '80:80'
+    depends_on:
+      - php
+
+  # The Database
+  mysql:
+    image: mariadb:10.7
+    environment:
+      - MYSQL_DATABASE=test
+      - MYSQL_USER=test
+      - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=yes
+    ports:
+      - "33069:3306"
+    volumes:
+      - snack-3-mysql-storage:/var/lib/mysql
+    networks:
+      - enodeus
+
+volumes:
+  snack-3-mysql-storage:
+
+
+networks:
+  enodeus:
+    external: true
