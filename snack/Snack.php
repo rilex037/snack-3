@@ -26,21 +26,28 @@ class Snack
 
     public function __clone()
     {
-        throw new \Exception("Cannot cnone a singleton.");
+        throw new \Exception();
     }
 
     public function __wakeup()
     {
-        throw new \Exception("Cannot unserialize a singleton.");
+        throw new \Exception();
     }
 
-    public function setOrm(OrmInterface $orm): void
+    public function setOrm(OrmInterface $orm): self
     {
         $this->orm = $orm;
+        return $this;
     }
 
     public function getOrm(): OrmInterface
     {
         return $this->orm;
+    }
+
+    public function setRouter($router): self
+    {
+        $this->router = $router;
+        return $this;
     }
 }

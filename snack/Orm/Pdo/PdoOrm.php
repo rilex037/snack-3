@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Snack\Orm;
+namespace Snack\Orm\Pdo;
+
+use Snack\Orm\OrmInterface;
 
 class PdoOrm implements OrmInterface
 {
@@ -10,9 +12,9 @@ class PdoOrm implements OrmInterface
     private int $offset;
     private int $limit;
 
-    public function __construct(\PDO $pdo)
+    public function __construct()
     {
-        $this->pdo = $pdo;
+        $this->pdo = new \PDO('mysql:host=localhost;dbname=database_name', 'username', 'password');
     }
 
     public function get(int $id): ?array
@@ -23,40 +25,52 @@ class PdoOrm implements OrmInterface
     }
     public function getAll(): array
     {
-        // TODO: Add business logic to retrieve all records from database
-        return [];
+        $stmt = $this->pdo->prepare($this->buildQuery());
+        $stmt->execute($this->conditions);
+        return $stmt->fetchAll();
     }
 
     public function insert(array $data): void
     {
-        // TODO: Add business logic to insert record into database
+        $columns = implode(', ', array_keys($data));
+        $placeholders = implode(', ', array_map(function ($key) {
+            return ":$key";
+        }, array_keys($data)));
+        $stmt = $this->pdo->prepare("INSERT INTO table ($columns) VALUES ($placeholders)");
+        $stmt->execute($data);
     }
 
     public function update(int $id, array $data): void
     {
-        // TODO: Add business logic to update record in database
+        $set = implode(', ', array_map(function ($key) {
+            return "$key = :$key";
+        }, array_keys($data)));
+        $data['id'] = $id;
+        $stmt = $this->pdo->prepare("UPDATE table SET $set WHERE id = :id");
+        $stmt->execute($data);
     }
 
     public function delete(int $id): void
     {
-        // TODO: Add business logic to delete record from database
+        $stmt = $this->pdo->prepare('DELETE FROM table WHERE id = :id');
+        $stmt->execute(['id' => $id]);
     }
 
     public function join(string $table, string $on, string $type): OrmInterface
     {
-        // TODO: Add business logic to join tables in database
+        $this->joins[] = "$type JOIN $table ON $on";
         return $this;
     }
 
     public function where(array $conditions): OrmInterface
     {
-        // TODO: Add business logic to apply conditions to query
+        $this->conditions = $conditions;
         return $this;
     }
 
     public function orderBy(string $column, string $direction): OrmInterface
     {
-        // TODO: Add business logic to apply order to query
+        $this->orderBy = "$column $direction";
         return $this;
     }
 
@@ -75,6 +89,10 @@ class PdoOrm implements OrmInterface
     private function buildQuery(): string
     {
         $query = 'SELECT * FROM table';
+
+        if (!empty($this->joins)) {
+            $query .= ' ' . implode(' ', $this->joins);
+        }
 
         if (!empty($this->conditions)) {
             $query .= ' WHERE ' . implode(' AND ', array_map(function ($k, $v) {
