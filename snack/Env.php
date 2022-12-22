@@ -9,6 +9,7 @@ use Dotenv\Dotenv;
 final class Env
 {
     private static ?Dotenv $dotenv = null;
+
     /**
      * @codeCoverageIgnore
      */

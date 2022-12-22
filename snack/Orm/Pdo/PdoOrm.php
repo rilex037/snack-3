@@ -8,7 +8,7 @@ use Snack\Orm\OrmInterface;
 
 final class PdoOrm implements OrmInterface
 {
-    private \PDO $pdo;
+    private static ?\PDO $pdo = null;
     private array $conditions = [];
     private array $joins = [];
     private string $orderBy = '';
@@ -17,18 +17,20 @@ final class PdoOrm implements OrmInterface
 
     public function __construct()
     {
-        $this->pdo = new \PDO('mysql:host=localhost;dbname=database_name', 'username', 'password');
+        if (!self::$pdo) {
+            self::$pdo = require_once 'PdoInstance.php';
+        }
     }
 
     public function get(int $id): ?array
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM table WHERE id = :id');
+        $stmt = self::$pdo->prepare('SELECT * FROM table WHERE id = :id');
         $stmt->execute(['id' => $id]);
         return $stmt->fetch();
     }
     public function getAll(): array
     {
-        $stmt = $this->pdo->prepare($this->buildQuery());
+        $stmt = self::$pdo->prepare($this->buildQuery());
         $stmt->execute($this->conditions);
         return $stmt->fetchAll();
     }
@@ -39,7 +41,7 @@ final class PdoOrm implements OrmInterface
         $placeholders = implode(', ', array_map(function ($key) {
             return ":$key";
         }, array_keys($data)));
-        $stmt = $this->pdo->prepare("INSERT INTO table ($columns) VALUES ($placeholders)");
+        $stmt = self::$pdo->prepare("INSERT INTO table ($columns) VALUES ($placeholders)");
         $stmt->execute($data);
     }
 
@@ -49,13 +51,13 @@ final class PdoOrm implements OrmInterface
             return "$key = :$key";
         }, array_keys($data)));
         $data['id'] = $id;
-        $stmt = $this->pdo->prepare("UPDATE table SET $set WHERE id = :id");
+        $stmt = self::$pdo->prepare("UPDATE table SET $set WHERE id = :id");
         $stmt->execute($data);
     }
 
     public function delete(int $id): void
     {
-        $stmt = $this->pdo->prepare('DELETE FROM table WHERE id = :id');
+        $stmt = self::$pdo->prepare('DELETE FROM table WHERE id = :id');
         $stmt->execute(['id' => $id]);
     }
 

@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Snack;
 
+use Bramus\Router\Router;
 use Snack\Orm\OrmInterface;
 
 final class Snack
 {
     private static $instance;
     private OrmInterface $orm;
-    private $router;
+    private Router $router;
 
     private function __construct()
     {
@@ -46,9 +47,14 @@ final class Snack
         return $this->orm;
     }
 
-    public function setRouter($router): self
+    public function setRouter(Router $router): self
     {
         $this->router = $router;
         return $this;
+    }
+
+    public function getRouter(): Router
+    {
+        return $this->router;
     }
 }

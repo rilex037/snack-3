@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
-$config = [
-    'orm' => Snack\Orm\Pdo\PdoOrm::class,
-    'router' => Snack\Router\SnackRouter::class,
+return [
+    'instances' => [
+        'orm' => Snack\Orm\Pdo\PdoOrm::class,
+        'router' => Bramus\Router\Router::class,
+    ],
+    'routes' => ['web' => '../app/routes/web.php']
 ];

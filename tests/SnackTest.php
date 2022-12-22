@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Snack\Orm\OrmInterface;
 use Snack\Snack;
 
-class SnackTest extends TestCase
+final class SnackTest extends TestCase
 {
     public function testGetInstanceReturnsSameInstance(): void
     {
