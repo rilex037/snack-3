@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Test;
 
-
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Snack\Env;

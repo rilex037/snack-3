@@ -9,7 +9,8 @@ use Snack\Orm\OrmInterface;
 final class Snack
 {
     private static $instance;
-    private $orm;
+    private OrmInterface $orm;
+    private $router;
 
     private function __construct()
     {

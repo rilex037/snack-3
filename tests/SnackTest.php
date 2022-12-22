@@ -42,6 +42,6 @@ class SnackTest extends TestCase
 
         $this->expectException(\Exception::class);
         $serializedSnack = serialize($snack);
-         unserialize($serializedSnack);
+        unserialize($serializedSnack);
     }
 }
