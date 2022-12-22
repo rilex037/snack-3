@@ -13,15 +13,12 @@ start-up:
 	@docker network inspect test-net >/dev/null 2>&1 || docker network create --driver bridge test-net
 	@docker-compose up -d
 
-fix-permisions:
-	sudo chown -R $$USER:$$USER .
-
 # make test ARGS="tests/Feature/Endpoints/Graphql/TodoCreateTest.php"
 test:
-	@$(APP_CONTAINER) "php artisan test $(ARGS)"
+	@$(APP_CONTAINER) "XDEBUG_MODE=coverage vendor/bin/phpunit tests --coverage-text $(ARGS)"
 
 generate-coverage:
-	@$(APP_CONTAINER) "php -dxdebug.mode=coverage ./vendor/phpunit/phpunit/phpunit --coverage-html ./storage/app/public/build/coverage-report --testsuite Feature,Unit --stop-on-failure; \
+	@$(APP_CONTAINER) "php -dxdebug.mode=coverage ./vendor/phpunit/phpunit/phpunit --coverage-html ./public/build/coverage-report tests --stop-on-failure; \
 	chmod -R 777 .";
 
 fix-permissions:

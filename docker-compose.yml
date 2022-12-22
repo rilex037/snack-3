@@ -11,6 +11,10 @@ services:
       - ./.docker/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
     networks:
       - enodeus
+    working_dir: /home/app
+    dns:
+      - 8.8.8.8
+      - 8.8.2.2
     depends_on:
       - mysql
 
