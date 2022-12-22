@@ -6,9 +6,12 @@ namespace Snack\Orm\Pdo;
 
 use Snack\Orm\OrmInterface;
 
-class PdoOrm implements OrmInterface
+final class PdoOrm implements OrmInterface
 {
     private \PDO $pdo;
+    private array $conditions = [];
+    private array $joins = [];
+    private string $orderBy = '';
     private int $offset;
     private int $limit;
 

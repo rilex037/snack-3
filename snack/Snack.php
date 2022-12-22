@@ -6,7 +6,7 @@ namespace Snack;
 
 use Snack\Orm\OrmInterface;
 
-class Snack
+final class Snack
 {
     private static $instance;
     private $orm;
