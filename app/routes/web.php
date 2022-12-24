@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
+use App\Http\Controller\HomeController;
+
 $router->get('/', function () {
-    echo 'Home Page!';
+    echo (new HomeController())->index();
 });
