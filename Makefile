@@ -13,9 +13,12 @@ start-up:
 	@docker network inspect test-net >/dev/null 2>&1 || docker network create --driver bridge test-net
 	@docker-compose up -d
 
-# make test ARGS="tests/Feature/Endpoints/Graphql/TodoCreateTest.php"
+# make test ARGS="tests/Database/BuilderTest.php"
 test:
-	@$(APP_CONTAINER) "XDEBUG_MODE=coverage vendor/bin/phpunit tests --coverage-text $(ARGS)"
+	@$(APP_CONTAINER) "XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-text $(ARGS)"
+
+migrate:
+	@$(APP_CONTAINER) "php bin/migrate.php"
 
 generate-coverage:
 	@$(APP_CONTAINER) "php -dxdebug.mode=coverage ./vendor/phpunit/phpunit/phpunit --coverage-html ./public/build/coverage-report tests --stop-on-failure; \

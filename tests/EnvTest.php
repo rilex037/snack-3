@@ -10,17 +10,29 @@ use Snack\Env;
 
 final class EnvTest extends TestCase
 {
-    public function testConstructorThrowsError(): void
+    public function testConstructorIsPrivate(): void
     {
-        $reflection = new ReflectionClass('Snack\Env');
-        $constructor = $reflection->getConstructor();
+        $constructor = (new ReflectionClass(Env::class))->getConstructor();
+
+        $this->assertNotNull($constructor);
         $this->assertTrue($constructor->isPrivate());
-        var_dump($constructor->isPrivate());
     }
 
-    public function testGet(): void
+    public function testGetReturnsDefaultForMissingKey(): void
     {
-        $this->assertEquals('localhost', Env::get('DB_HOST'));
-        $this->assertEquals(Env::get('INVALID_KEY'), '');
+        $this->assertNull(Env::get('SNACK_TEST_UNDEFINED_KEY'));
+        $this->assertSame('fallback', Env::get('SNACK_TEST_UNDEFINED_KEY', 'fallback'));
+    }
+
+    public function testHasReflectsPresence(): void
+    {
+        putenv('SNACK_TEST_KEY=1');
+        $_ENV['SNACK_TEST_KEY'] = '1';
+
+        $this->assertTrue(Env::has('SNACK_TEST_KEY'));
+        $this->assertFalse(Env::has('SNACK_TEST_MISSING_KEY'));
+
+        unset($_ENV['SNACK_TEST_KEY']);
+        putenv('SNACK_TEST_KEY');
     }
 }

@@ -2,22 +2,13 @@
 
 declare(strict_types=1);
 
-use League\Plates\Engine;
-use Snack\Snack;
+use Snack\Application;
 
-require_once dirname(dirname(__FILE__)) . '/vendor/autoload.php';
+require dirname(__DIR__) . '/vendor/autoload.php';
 
-$CONFIG = require_once dirname(dirname(__FILE__)) . '/config.php';
+$config = require dirname(__DIR__) . '/config.php';
 
-Snack::getInstance()
-    ->setOrm(new $CONFIG['instances']['orm'])
-    ->setRouter(new $CONFIG['instances']['router'])
-    ->setTemplates(new Engine($CONFIG['templatesPath']));
+$app = new Application();
+$app->boot($config);
 
-$router = Snack::getInstance()->getRouter();
-
-foreach ($CONFIG['routes'] as $routeFile) {
-    require_once $routeFile;
-}
-
-$router->run();
+return $app;

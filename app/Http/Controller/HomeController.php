@@ -2,15 +2,21 @@
 
 declare(strict_types=1);
 
-namespace  App\Http\Controller;
+namespace App\Http\Controller;
 
+use App\Models\Task;
 use Snack\Controller;
+use Snack\Http\Response;
 
 final class HomeController extends Controller
 {
-    public function index(): string
+    public function index(): Response
     {
-        return $this->template
-            ->render('sections/body', ['title' => 'Test Title']);
+        $tasks = Task::query()->orderBy('created_at', 'desc')->get();
+
+        return $this->view('sections/body', [
+            'title' => 'Snack — Task Board',
+            'tasks' => array_map(static fn (Task $task): array => $task->toArray(), $tasks),
+        ]);
     }
 }

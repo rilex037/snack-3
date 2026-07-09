@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Http\Controller\HomeController;
+use Snack\Routing\RouterInterface;
 
-$router->get('/', function () {
-    echo (new HomeController())->index();
-});
+$router->get('/', [HomeController::class, 'index']);
